@@ -54,7 +54,18 @@ function Plugin(props: { pageUrl?: string }) {
         }
       )
       if (!response.ok) {
-        throw new Error(`프록시 요청 실패 (${response.status})`)
+        const errorPayload = await safeParseJson(response)
+        const detailMessage =
+          errorPayload?.error && errorPayload?.detail
+            ? `${errorPayload.error}: ${stringifyDetail(errorPayload.detail)}`
+            : errorPayload?.error
+              ? String(errorPayload.error)
+              : null
+        throw new Error(
+          detailMessage
+            ? `프록시 요청 실패 (${response.status}) - ${detailMessage}`
+            : `프록시 요청 실패 (${response.status})`
+        )
       }
 
       const payload = await response.json()
@@ -167,4 +178,21 @@ function toRenderBlock(block: unknown): RenderBlock | null {
 
 function isRenderBlock(value: RenderBlock | null): value is RenderBlock {
   return value !== null
+}
+
+async function safeParseJson(response: Response): Promise<null | Record<string, unknown>> {
+  try {
+    return (await response.json()) as Record<string, unknown>
+  } catch (_error) {
+    return null
+  }
+}
+
+function stringifyDetail(detail: unknown): string {
+  if (typeof detail === 'string') return detail
+  try {
+    return JSON.stringify(detail)
+  } catch (_error) {
+    return String(detail)
+  }
 }
