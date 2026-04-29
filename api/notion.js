@@ -30,10 +30,13 @@ module.exports = async function handler(req, res) {
     }
 
     const [blocksResponse, pageResponse] = await Promise.all([
-      fetch(`https://api.notion.com/v1/blocks/${encodeURIComponent(pageId)}/children`, {
-        method: 'GET',
-        headers: commonHeaders
-      }),
+      fetch(
+        `https://api.notion.com/v1/blocks/${encodeURIComponent(pageId)}/children?page_size=100`,
+        {
+          method: 'GET',
+          headers: commonHeaders
+        }
+      ),
       fetch(`https://api.notion.com/v1/pages/${encodeURIComponent(pageId)}`, {
         method: 'GET',
         headers: commonHeaders

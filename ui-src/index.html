@@ -60,7 +60,7 @@
     <div id="status">토큰과 페이지 URL을 입력하세요.</div>
 
     <script>
-      const BASE_URL = 'https://fignotion-7upqfax1t-jjjjisuns-projects.vercel.app'
+      const BASE_URL = 'https://fignotion.vercel.app'
       const tokenInput = document.getElementById('token')
       const pageUrlInput = document.getElementById('pageUrl')
       const statusEl = document.getElementById('status')
@@ -156,9 +156,15 @@
           block.type !== 'heading_2' &&
           block.type !== 'heading_3' &&
           block.type !== 'paragraph' &&
-          block.type !== 'bulleted_list_item'
+          block.type !== 'bulleted_list_item' &&
+          block.type !== 'numbered_list_item' &&
+          block.type !== 'callout' &&
+          block.type !== 'divider'
         ) {
           return null
+        }
+        if (block.type === 'divider') {
+          return { type: block.type, text: '' }
         }
         const richText = block[block.type] && block[block.type].rich_text
         const text = Array.isArray(richText)

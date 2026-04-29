@@ -4,11 +4,19 @@ import { h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'
 
 type RenderBlock = {
-  type: 'heading_1' | 'heading_2' | 'heading_3' | 'paragraph' | 'bulleted_list_item'
+  type:
+    | 'heading_1'
+    | 'heading_2'
+    | 'heading_3'
+    | 'paragraph'
+    | 'bulleted_list_item'
+    | 'numbered_list_item'
+    | 'callout'
+    | 'divider'
   text: string
 }
 
-const BASE_URL = 'https://fignotion-7upqfax1t-jjjjisuns-projects.vercel.app'
+const BASE_URL = 'https://fignotion.vercel.app'
 
 function Plugin(props: { pageUrl?: string }) {
   const [token, setToken] = useState('')
@@ -137,10 +145,18 @@ function toRenderBlock(block: unknown): RenderBlock | null {
     type !== 'heading_2' &&
     type !== 'heading_3' &&
     type !== 'paragraph' &&
-    type !== 'bulleted_list_item'
+    type !== 'bulleted_list_item' &&
+    type !== 'numbered_list_item' &&
+    type !== 'callout' &&
+    type !== 'divider'
   ) {
     return null
   }
+
+  if (type === 'divider') {
+    return { type, text: '' }
+  }
+
   const content = data[type] as { rich_text?: Array<{ plain_text?: string }> } | undefined
   const text = Array.isArray(content?.rich_text)
     ? content.rich_text.map((item) => item.plain_text ?? '').join('')

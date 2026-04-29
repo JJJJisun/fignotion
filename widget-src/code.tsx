@@ -11,6 +11,9 @@ type RenderBlock =
   | { type: 'heading_3'; text: string }
   | { type: 'paragraph'; text: string }
   | { type: 'bulleted_list_item'; text: string }
+  | { type: 'numbered_list_item'; text: string }
+  | { type: 'callout'; text: string }
+  | { type: 'divider'; text: string }
 
 const UI_SIZE = { width: 360, height: 420 }
 
@@ -98,26 +101,41 @@ function NotionWidget() {
         </Text>
       ) : (
         <AutoLayout direction="vertical" spacing={6} width="fill-parent">
-          {blocks.map((block, index) => (
-            <Text
-              key={`${block.type}-${index}`}
-              fontSize={getFontSize(block.type)}
-              fontWeight={getFontWeight(block.type)}
-              width="fill-parent"
-              horizontalAlignText="left"
-            >
-              {formatBlockText(block)}
-            </Text>
-          ))}
+          {blocks.map((block, index) =>
+            block.type === 'divider' ? (
+              <AutoLayout
+                key={`${block.type}-${index}`}
+                width="fill-parent"
+                height={1}
+                fill="#D1D5DB"
+              />
+            ) : (
+              <Text
+                key={`${block.type}-${index}`}
+                fontSize={getFontSize(block.type)}
+                fontWeight={getFontWeight(block.type)}
+                width="fill-parent"
+                horizontalAlignText="left"
+              >
+                {formatBlockText(block, index)}
+              </Text>
+            )
+          )}
         </AutoLayout>
       )}
     </AutoLayout>
   )
 }
 
-function formatBlockText(block: RenderBlock): string {
+function formatBlockText(block: RenderBlock, index: number): string {
   if (block.type === 'bulleted_list_item') {
     return `• ${block.text}`
+  }
+  if (block.type === 'numbered_list_item') {
+    return `${index + 1}. ${block.text}`
+  }
+  if (block.type === 'callout') {
+    return `💡 ${block.text}`
   }
   return block.text
 }
