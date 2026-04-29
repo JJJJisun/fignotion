@@ -8,7 +8,7 @@ type RenderBlock = {
   text: string
 }
 
-const BASE_URL = 'https://your-vercel-app.vercel.app'
+const BASE_URL = 'https://fignotion-7upqfax1t-jjjjisuns-projects.vercel.app'
 
 function Plugin(props: { pageUrl?: string }) {
   const [token, setToken] = useState('')
